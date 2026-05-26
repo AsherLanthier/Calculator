@@ -5,15 +5,53 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 
-val equation = "1 + 2 + 3 * 2 - 3"
+//val equation = "1 + 2 * 7"
 val opperators = arrayOf("+", "-", "*", "/")
 
-@Preview
-@Composable
-fun test() {
+fun calculate(equation: String) : String {
+    val postfix = infixToPostfix(equation)
+    val items = postfix.split("\\s+".toRegex())
+    var values = ArrayDeque<Int>()
+
+    for (item in items) {
+        if (item in opperators) {
+            var answer = 0
+
+            var num2 = values.last()
+            values.removeLast()
+
+            var num1 = values.last()
+            values.removeLast()
+
+            if (item == "+") {
+                answer = num1 + num2
+            }
+            else if (item == "-") {
+                answer = num1 - num2
+            }
+            else if (item == "*") {
+                answer = num1 * num2
+            }
+            else if (item == "/") {
+                answer = num1 / num2
+            }
+
+            values.addLast(answer)
+        }
+
+        else {
+            values.addLast(item.toInt())
+        }
+    }
+    
+    val finalValue = values.last().toString()
+
+    return finalValue
+}
+
+fun infixToPostfix(equation: String) : String {
     var opperatorsStack = ArrayDeque<String>()
-    var outputStack = ArrayDeque<String>()
-    var infix = ""
+    var postfix = ""
 
     for (char in equation){
         var item = char.toString()
@@ -27,23 +65,23 @@ fun test() {
                     opperatorsStack.addLast(item)
                 }
                 else {
-                    infix += opperatorsStack.last()
+                    postfix += "  " + opperatorsStack.last()
                     opperatorsStack.removeLast()
                     opperatorsStack.addLast(item)
                 }
             }
         }
         else {
-            infix += item
+            postfix += item
         }
     }
 
     for (opperator in 0 until (opperatorsStack.size)) {
-        infix += " " + opperatorsStack.last()
+        postfix += "  " + opperatorsStack.last()
         opperatorsStack.removeLast()
     }
 
-    Text(text = infix, color = Color.White)
+    return postfix
 }
 
 fun findPrecedence(newOpperator: String, lastOpperator: String): Boolean {
@@ -64,7 +102,7 @@ fun findPrecedence(newOpperator: String, lastOpperator: String): Boolean {
         opperatorsPrecedence[i] = precedence
     }
 
-    var isHigherPrecedence: Boolean = false
+    var isHigherPrecedence = false
 
     if (opperatorsPrecedence[0] > opperatorsPrecedence[1]) {
         isHigherPrecedence = true
