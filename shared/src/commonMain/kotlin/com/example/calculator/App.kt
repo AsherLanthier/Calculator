@@ -4,12 +4,16 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,47 +22,49 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 
 import calculator.shared.generated.resources.Res
 import calculator.shared.generated.resources.compose_multiplatform
 
 
-var words by mutableStateOf("")
+var equation by mutableStateOf("")
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        main()
-        /*
-        var numberButtons = arrayOf<NumberButton>()
-        for (i in 0 until 5) {
-            numberButtons[i] = NumberButton(i)
-        }
-        */
+        Column (modifier = Modifier.fillMaxSize()) {
+            Text(text = equation, modifier = Modifier.height(150.dp))
 
-
-
-
-
-        Column {
-            Text(text = words)
-
-            Row {
+            Row (modifier = Modifier.height(IntrinsicSize.Max).fillMaxWidth()) {
                 NumberButton(1)
                 NumberButton(2)
                 NumberButton(3)
-
+                FunctionButton("+")
             }
 
-            Row {
-
-
+            Row (modifier = Modifier.height(IntrinsicSize.Max).fillMaxWidth()) {
+                NumberButton(3)
+                NumberButton(4)
+                NumberButton(5)
+                FunctionButton("-")
             }
 
-            Row {
+            Row (modifier = Modifier.height(IntrinsicSize.Max).fillMaxWidth()) {
+                NumberButton(7)
+                NumberButton(8)
+                NumberButton(9)
+                FunctionButton("*")
+            }
 
+            Row (modifier = Modifier.height(IntrinsicSize.Max).fillMaxWidth()) {
+                ClearButton()
+                NumberButton(0)
+                EqualsButton()
+                FunctionButton("/")
             }
         }
     }
@@ -67,13 +73,60 @@ fun App() {
 @Composable
 fun NumberButton(id: Int) {
     Button(
-        onClick = {words += id.toString()},
+        onClick = {equation += id.toString()},
         shape = RoundedCornerShape(0),
+        modifier = Modifier.fillMaxHeight(),
         colors = ButtonDefaults.buttonColors(
-            Color(0xe3e3e3),
-            Color(0x080808))
+            Color(0xFFCCCCCC),
+            Color.Black)
     ) {
-        Text(text = id.toString())
+        Text(text = id.toString(),
+            fontSize = 50.sp)
+    }
+}
+
+@Composable
+fun FunctionButton(functionType: String) {
+    Button(
+        onClick = {equation += " " + functionType + " "},
+        shape = RoundedCornerShape(0),
+        modifier = Modifier.fillMaxHeight(),
+        colors = ButtonDefaults.buttonColors(
+            Color(0xFFA3A3A3),
+            Color.Black)
+    ) {
+        Text(text = functionType,
+            fontSize = 50.sp)
+    }
+}
+
+@Composable
+fun EqualsButton() {
+    Button(
+        onClick = {equation = calculate(equation)},
+        shape = RoundedCornerShape(0),
+        modifier = Modifier.fillMaxHeight(),
+        colors = ButtonDefaults.buttonColors(
+            Color(0xFFA3A3A3),
+            Color.Black)
+    ) {
+        Text(text = "=",
+            fontSize = 50.sp)
+    }
+}
+
+@Composable
+fun ClearButton() {
+    Button(
+        onClick = {equation = ""},
+        shape = RoundedCornerShape(0),
+        modifier = Modifier.fillMaxHeight(),
+        colors = ButtonDefaults.buttonColors(
+            Color(0xFFA3A3A3),
+            Color.Black)
+    ) {
+        Text(text = "C",
+            fontSize = 50.sp)
     }
 }
 
